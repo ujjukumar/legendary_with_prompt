@@ -6,6 +6,7 @@ class Game:
     def __init__(self, game_string_raw) -> None:
         self.name = game_string_raw.split('(')[0].strip()
         self.disksize = game_string_raw.split('|')[-1].strip().split(')')[0]
+        self.app_name = game_string_raw.split('|')[0].strip().split('(')[1].split(': ')[1]
 
     def __str__(self):
         return f"{self.name} ({self.disksize})"
@@ -32,8 +33,18 @@ def promt_user_and_doit(installed_games_list):
     for i, game in enumerate(game_object_list):
         print(f"{i + 1}: {game}")
 
-    promt = int(input("\n\nEnter number for the game you want to launch:- ")) - 1
-    code = f"legendary launch {game_object_list[promt].name}"
+    promt = input("\n\nEnter number for the game you want to launch:- ")
+
+    # Check if user input is valid
+    try:
+        promt = int(promt) - 1
+        code = f"legendary launch {game_object_list[promt].app_name}"
+    except:
+        print("-----------------------------------------------------------------")
+        if input("Invalid input. Do you want to try again? (y/n):- ") == 'y':
+            promt_user_and_doit(installed_games_list)
+        return
+
     print(f"Launching {game_object_list[promt]}\n")
     proc = subprocess.Popen(code, shell=False)
 
